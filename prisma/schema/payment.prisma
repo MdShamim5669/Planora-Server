@@ -1,0 +1,31 @@
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  CANCELLED
+}
+
+model Payment {
+  id              String         @id @default(uuid())
+  tranId          String         @unique
+  userId          String?
+  eventId         String?
+  eventTitle      String
+  amount          Decimal        @db.Decimal(10, 2)
+  currency        String         @default("BDT")
+  status          PaymentStatus  @default(PENDING)
+  gateway         String         @default("SSLCOMMERZ")
+  valId           String?
+  bankTranId      String?
+  participationId String?
+  invitationId    String?
+  createdAt       DateTime       @default(now())
+  paidAt          DateTime?
+  user            User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
+  event           Event?         @relation(fields: [eventId], references: [id], onDelete: SetNull)
+  participation   Participation? @relation(fields: [participationId], references: [id], onDelete: SetNull)
+  invitation      Invitation?    @relation(fields: [invitationId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([eventId])
+}

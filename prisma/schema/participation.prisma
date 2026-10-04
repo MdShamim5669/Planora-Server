@@ -1,0 +1,22 @@
+enum ParticipationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  BANNED
+}
+
+model Participation {
+  id        String              @id @default(uuid())
+  eventId   String
+  userId    String
+  status    ParticipationStatus
+  decidedAt DateTime?
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+  event     Event               @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user      User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payments  Payment[]
+
+  @@unique([eventId, userId])
+  @@index([eventId, status])
+}

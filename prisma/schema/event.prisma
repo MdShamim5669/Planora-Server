@@ -1,0 +1,27 @@
+enum Visibility {
+  PUBLIC
+  PRIVATE
+}
+
+model Event {
+  id             String          @id @default(uuid())
+  title          String
+  description    String
+  eventDate      DateTime
+  venue          String?
+  eventLink      String?
+  visibility     Visibility
+  fee            Decimal         @default(0) @db.Decimal(10, 2)
+  isFeatured     Boolean         @default(false)
+  organizerId    String
+  organizer      User            @relation(fields: [organizerId], references: [id], onDelete: Cascade)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  participations Participation[]
+  invitations    Invitation[]
+  payments       Payment[]
+  reviews        Review[]
+
+  @@index([visibility, eventDate])
+  @@index([organizerId])
+}

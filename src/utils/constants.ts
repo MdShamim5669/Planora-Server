@@ -1,0 +1,9 @@
+export const REVIEW_EDIT_WINDOW_DAYS = 7;
+
+export const PAGINATION = {
+  DEFAULT_PAGE: 1,
+  DEFAULT_LIMIT: 12,
+  MAX_LIMIT: 50,
+};
+
+export const UPCOMING_SLIDER_LIMIT = 9;

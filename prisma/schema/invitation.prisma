@@ -1,0 +1,20 @@
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+model Invitation {
+  id          String           @id @default(uuid())
+  eventId     String
+  inviteeId   String
+  status      InvitationStatus @default(PENDING)
+  respondedAt DateTime?
+  createdAt   DateTime         @default(now())
+  event       Event            @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  invitee     User             @relation(fields: [inviteeId], references: [id], onDelete: Cascade)
+  payments    Payment[]
+
+  @@unique([eventId, inviteeId])
+  @@index([inviteeId, status])
+}

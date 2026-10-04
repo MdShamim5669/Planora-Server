@@ -2,6 +2,13 @@
 
 RESTful API backend for the **Planora** event management platform, built with Node.js, Express, TypeScript, Prisma ORM, PostgreSQL, and SSLCommerz payment integration.
 
+## 🔗 Project Links
+
+- **Backend Repository**: [https://github.com/MdShamim5669/Planora-Server](https://github.com/MdShamim5669/Planora-Server)
+- **Frontend Repository**: [https://github.com/MdShamim5669/Planora](https://github.com/MdShamim5669/Planora)
+- **Live Deployed API**: [https://planora-server-vsyx.onrender.com](https://planora-server-vsyx.onrender.com)
+- **Health Check**: [https://planora-server-vsyx.onrender.com/api/v1/health](https://planora-server-vsyx.onrender.com/api/v1/health)
+
 ---
 
 ## Features

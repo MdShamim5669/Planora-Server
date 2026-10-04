@@ -14,6 +14,7 @@ const router = Router();
 router.get("/", validate(listEventsQuerySchema), optionalAuthenticate, eventsController.listEvents);
 router.get("/featured", eventsController.getFeatured);
 router.get("/upcoming", eventsController.getUpcoming);
+router.get("/plans", eventsController.getGatheringPlans);
 
 import { uploadBanner } from "../../middlewares/upload.middleware";
 

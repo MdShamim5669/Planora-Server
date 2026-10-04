@@ -20,20 +20,27 @@ export const createEventValidationSchema = z.object({
           "Event date must be in the future"
         ),
       venue: z.string().max(255).optional().nullable(),
-      eventLink: z.string().url("Invalid event URL").optional().nullable(),
-      visibility: z.nativeEnum(Visibility, {
-        required_error: "Visibility is required (PUBLIC or PRIVATE)",
-      }),
+      eventLink: z.string().url("Invalid event URL").optional().nullable().or(z.literal("")).transform((val) => (val === "" ? null : val)),
+      gatheringType: z
+        .enum(["PUBLIC_FREE", "PUBLIC_PAID", "PRIVATE_FREE", "PRIVATE_PAID"])
+        .optional(),
+      visibility: z.nativeEnum(Visibility).optional(),
       fee: z
-        .number({ required_error: "Fee is required" })
+        .number()
         .min(0, "Fee must be 0 or more")
         .max(1000000, "Fee cannot exceed 1,000,000")
         .refine(
           (val) => /^\d+(\.\d{1,2})?$/.test(val.toString()),
           "Fee can have at most 2 decimal places"
-        ),
-      imageUrl: z.string().url("Invalid image URL").optional().nullable(),
-      bannerImage: z.string().url("Invalid banner image URL").optional().nullable(),
+        )
+        .optional()
+        .default(0),
+      imageUrl: z.string().url("Invalid image URL").optional().nullable().or(z.literal("")).transform((val) => (val === "" ? null : val)),
+      bannerImage: z.string().url("Invalid banner image URL").optional().nullable().or(z.literal("")).transform((val) => (val === "" ? null : val)),
+    })
+    .refine((data) => data.visibility || data.gatheringType, {
+      message: "Either visibility (PUBLIC/PRIVATE) or gatheringType is required",
+      path: ["visibility"],
     })
     .refine((data) => (data.venue && data.venue.trim().length > 0) || (data.eventLink && data.eventLink.trim().length > 0), {
       message: "Provide a venue or an event link",

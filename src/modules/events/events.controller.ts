@@ -88,8 +88,40 @@ export const uploadBannerImage = catchAsync(async (req: Request, res: Response) 
   });
 });
 
+export const getGatheringPlans = catchAsync(async (_req: Request, res: Response) => {
+  const plans = await eventsService.getGatheringPlans();
+  return sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Gathering plans fetched successfully",
+    data: plans,
+  });
+});
+
 export const create = catchAsync(async (req: Request, res: Response) => {
   const payload = { ...req.body };
+
+  // Resolve gatheringType if provided
+  if (payload.gatheringType) {
+    switch (payload.gatheringType) {
+      case "PUBLIC_FREE":
+        payload.visibility = "PUBLIC";
+        payload.fee = 0;
+        break;
+      case "PUBLIC_PAID":
+        payload.visibility = "PUBLIC";
+        payload.fee = Number(payload.fee) > 0 ? Number(payload.fee) : 1500;
+        break;
+      case "PRIVATE_FREE":
+        payload.visibility = "PRIVATE";
+        payload.fee = 0;
+        break;
+      case "PRIVATE_PAID":
+        payload.visibility = "PRIVATE";
+        payload.fee = Number(payload.fee) > 0 ? Number(payload.fee) : 3500;
+        break;
+    }
+  }
 
   // If a file was uploaded in multipart/form-data, upload to Cloudinary
   if (req.file) {

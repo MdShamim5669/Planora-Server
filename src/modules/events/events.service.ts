@@ -249,6 +249,8 @@ export const getEventById = async (eventId: string, currentUserId?: string) => {
     visibility: event.visibility,
     fee: event.fee,
     isFeatured: event.isFeatured,
+    imageUrl: event.imageUrl,
+    bannerImage: event.bannerImage,
     organizer: event.organizer,
     averageRating,
     reviewCount: event._count.reviews,

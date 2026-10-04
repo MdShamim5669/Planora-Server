@@ -32,6 +32,8 @@ export const createEventValidationSchema = z.object({
           (val) => /^\d+(\.\d{1,2})?$/.test(val.toString()),
           "Fee can have at most 2 decimal places"
         ),
+      imageUrl: z.string().url("Invalid image URL").optional().nullable(),
+      bannerImage: z.string().url("Invalid banner image URL").optional().nullable(),
     })
     .refine((data) => (data.venue && data.venue.trim().length > 0) || (data.eventLink && data.eventLink.trim().length > 0), {
       message: "Provide a venue or an event link",
@@ -62,6 +64,8 @@ export const updateEventValidationSchema = z.object({
         message: "Fee can have at most 2 decimal places",
       })
       .optional(),
+    imageUrl: z.string().url("Invalid image URL").optional().nullable(),
+    bannerImage: z.string().url("Invalid banner image URL").optional().nullable(),
   }),
 });
 

@@ -20,6 +20,9 @@ const loadEnvVariables = (): EnvConfig => {
     "ADMIN_NAME",
     "ADMIN_EMAIL",
     "ADMIN_PASSWORD",
+    "CLOUDINARY_CLOUD_NAME",
+    "CLOUDINARY_API_KEY",
+    "CLOUDINARY_API_SECRET",
   ];
 
   requireEnvVariable.forEach((variable) => {
@@ -49,6 +52,11 @@ const loadEnvVariables = (): EnvConfig => {
       EMAIL: process.env.ADMIN_EMAIL as string,
       PASSWORD: process.env.ADMIN_PASSWORD as string,
     },
+    CLOUDINARY: {
+      CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME as string,
+      API_KEY: process.env.CLOUDINARY_API_KEY as string,
+      API_SECRET: process.env.CLOUDINARY_API_SECRET as string,
+    },
   };
 };
 
@@ -62,6 +70,9 @@ export const env = {
   ADMIN_NAME: envVars.ADMIN.NAME,
   ADMIN_EMAIL: envVars.ADMIN.EMAIL,
   ADMIN_PASSWORD: envVars.ADMIN.PASSWORD,
+  CLOUDINARY_CLOUD_NAME: envVars.CLOUDINARY.CLOUD_NAME,
+  CLOUDINARY_API_KEY: envVars.CLOUDINARY.API_KEY,
+  CLOUDINARY_API_SECRET: envVars.CLOUDINARY.API_SECRET,
 };
 
 export default envVars;

@@ -16,6 +16,8 @@ export interface CreateEventInput {
   eventLink?: string | null;
   visibility: Visibility;
   fee?: number | string;
+  imageUrl?: string | null;
+  bannerImage?: string | null;
 }
 
 export interface UpdateEventInput {
@@ -26,6 +28,8 @@ export interface UpdateEventInput {
   eventLink?: string | null;
   visibility?: Visibility;
   fee?: number | string;
+  imageUrl?: string | null;
+  bannerImage?: string | null;
 }
 
 export interface EventViewerContext {

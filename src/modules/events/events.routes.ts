@@ -15,8 +15,16 @@ router.get("/", validate(listEventsQuerySchema), optionalAuthenticate, eventsCon
 router.get("/featured", eventsController.getFeatured);
 router.get("/upcoming", eventsController.getUpcoming);
 
+import { uploadBanner } from "../../middlewares/upload.middleware";
+
 // Protected routes (declared before :id)
 router.get("/mine", authenticate, eventsController.getMine);
+router.post(
+  "/upload-banner",
+  authenticate,
+  uploadBanner.single("banner"),
+  eventsController.uploadBannerImage
+);
 router.post("/", authenticate, validate(createEventValidationSchema), eventsController.create);
 
 // Event ID routes

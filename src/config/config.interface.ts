@@ -16,4 +16,9 @@ export interface EnvConfig {
     EMAIL: string;
     PASSWORD: string;
   };
+  CLOUDINARY: {
+    CLOUD_NAME: string;
+    API_KEY: string;
+    API_SECRET: string;
+  };
 }

@@ -54,8 +54,59 @@ export const getById = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+import { uploadToCloudinary } from "../../lib/cloudinary";
+
+export const uploadBannerImage = catchAsync(async (req: Request, res: Response) => {
+  if (!req.file) {
+    return sendResponse(res, {
+      statusCode: 400,
+      success: false,
+      message: "No image file provided for banner upload",
+      data: null,
+    });
+  }
+
+  // Upload directly to Cloudinary folder 'planora/events'
+  const result = await uploadToCloudinary(
+    req.file.buffer,
+    "planora/events",
+    req.file.originalname
+  );
+
+  return sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Banner uploaded to Cloudinary successfully",
+    data: {
+      url: result.secure_url,
+      secure_url: result.secure_url,
+      public_id: result.public_id,
+      format: result.format,
+      width: result.width,
+      height: result.height,
+    },
+  });
+});
+
 export const create = catchAsync(async (req: Request, res: Response) => {
-  const event = await eventsService.createEvent(req.user!.id, req.body);
+  const payload = { ...req.body };
+
+  // If a file was uploaded in multipart/form-data, upload to Cloudinary
+  if (req.file) {
+    const result = await uploadToCloudinary(
+      req.file.buffer,
+      "planora/events",
+      req.file.originalname
+    );
+    payload.imageUrl = result.secure_url;
+    payload.bannerImage = result.secure_url;
+  } else if (payload.bannerImage && !payload.imageUrl) {
+    payload.imageUrl = payload.bannerImage;
+  } else if (payload.imageUrl && !payload.bannerImage) {
+    payload.bannerImage = payload.imageUrl;
+  }
+
+  const event = await eventsService.createEvent(req.user!.id, payload);
   return sendResponse(res, {
     statusCode: 201,
     success: true,
@@ -65,7 +116,23 @@ export const create = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const update = catchAsync(async (req: Request, res: Response) => {
-  const event = await eventsService.updateEvent(req.params.id, req.user!.id, req.body);
+  const payload = { ...req.body };
+
+  if (req.file) {
+    const result = await uploadToCloudinary(
+      req.file.buffer,
+      "planora/events",
+      req.file.originalname
+    );
+    payload.imageUrl = result.secure_url;
+    payload.bannerImage = result.secure_url;
+  } else if (payload.bannerImage && !payload.imageUrl) {
+    payload.imageUrl = payload.bannerImage;
+  } else if (payload.imageUrl && !payload.bannerImage) {
+    payload.bannerImage = payload.imageUrl;
+  }
+
+  const event = await eventsService.updateEvent(req.params.id, req.user!.id, payload);
   return sendResponse(res, {
     statusCode: 200,
     success: true,

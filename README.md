@@ -96,6 +96,27 @@ npm run build
 npm start
 ```
 
+### 6. Running with Docker
+
+You can containerize and run the backend using Docker:
+
+```bash
+# Build the Docker image
+docker build -t planora-backend .
+
+# Run with Docker Compose (loads .env automatically)
+docker compose up -d --build
+
+# View container logs
+docker compose logs -f backend
+
+# Run database migrations inside container (if needed)
+docker compose exec backend npx prisma migrate deploy
+
+# Stop containers
+docker compose down
+```
+
 ---
 
 ## API Endpoints Reference

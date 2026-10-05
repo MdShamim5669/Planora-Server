@@ -8,6 +8,7 @@ import { invitationsRoutes } from "../modules/invitations/invitations.routes";
 import { paymentsRoutes } from "../modules/payments/payments.routes";
 import { reviewsRoutes } from "../modules/reviews/reviews.routes";
 import { adminRoutes } from "../modules/admin/admin.routes";
+import { assistantRoutes } from "../modules/assistant/assistant.route";
 
 const router = Router();
 
@@ -20,6 +21,7 @@ const moduleRoutes: IRouteModule[] = [
   { path: "/payments", route: paymentsRoutes },
   { path: "/reviews", route: reviewsRoutes },
   { path: "/admin", route: adminRoutes },
+  { path: "/assistant", route: assistantRoutes },
 ];
 
 // Base /api/v1 route info

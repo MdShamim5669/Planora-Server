@@ -57,6 +57,16 @@ const loadEnvVariables = (): EnvConfig => {
       API_KEY: process.env.CLOUDINARY_API_KEY as string,
       API_SECRET: process.env.CLOUDINARY_API_SECRET as string,
     },
+    ASSISTANT: {
+      ENABLED: process.env.ASSISTANT_ENABLED === "true",
+      ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY || "",
+      ANTHROPIC_MODEL: process.env.ANTHROPIC_MODEL || "claude-haiku-4-5-20251001",
+      RETRIEVER: (process.env.RETRIEVER === "vector" ? "vector" : "keyword") as "keyword" | "vector",
+      TOP_K: Number(process.env.ASSISTANT_TOP_K) || 6,
+      VOYAGE_API_KEY: process.env.VOYAGE_API_KEY || "",
+      EMBEDDING_MODEL: process.env.EMBEDDING_MODEL || "voyage-3.5",
+      EMBEDDING_DIM: Number(process.env.EMBEDDING_DIM) || 1024,
+    },
   };
 };
 
@@ -73,6 +83,14 @@ export const env = {
   CLOUDINARY_CLOUD_NAME: envVars.CLOUDINARY.CLOUD_NAME,
   CLOUDINARY_API_KEY: envVars.CLOUDINARY.API_KEY,
   CLOUDINARY_API_SECRET: envVars.CLOUDINARY.API_SECRET,
+  ASSISTANT_ENABLED: envVars.ASSISTANT?.ENABLED ?? false,
+  ANTHROPIC_API_KEY: envVars.ASSISTANT?.ANTHROPIC_API_KEY ?? "",
+  ANTHROPIC_MODEL: envVars.ASSISTANT?.ANTHROPIC_MODEL ?? "claude-haiku-4-5-20251001",
+  RETRIEVER: envVars.ASSISTANT?.RETRIEVER ?? "keyword",
+  ASSISTANT_TOP_K: envVars.ASSISTANT?.TOP_K ?? 6,
+  VOYAGE_API_KEY: envVars.ASSISTANT?.VOYAGE_API_KEY ?? "",
+  EMBEDDING_MODEL: envVars.ASSISTANT?.EMBEDDING_MODEL ?? "voyage-3.5",
+  EMBEDDING_DIM: envVars.ASSISTANT?.EMBEDDING_DIM ?? 1024,
 };
 
 export default envVars;

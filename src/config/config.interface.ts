@@ -21,4 +21,14 @@ export interface EnvConfig {
     API_KEY: string;
     API_SECRET: string;
   };
+  ASSISTANT?: {
+    ENABLED: boolean;
+    ANTHROPIC_API_KEY?: string;
+    ANTHROPIC_MODEL?: string;
+    RETRIEVER: 'keyword' | 'vector';
+    TOP_K: number;
+    VOYAGE_API_KEY?: string;
+    EMBEDDING_MODEL?: string;
+    EMBEDDING_DIM?: number;
+  };
 }

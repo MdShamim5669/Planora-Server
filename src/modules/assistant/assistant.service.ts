@@ -9,6 +9,7 @@ import {
 import { parseFilters } from "./filters";
 import { getViewerContext } from "./viewerContext";
 import { keywordSearch } from "./retrieve.keyword";
+import { vectorSearch } from "./retrieve.vector";
 import { buildContext } from "./context";
 import { SYSTEM_PROMPT } from "./prompt";
 
@@ -46,8 +47,6 @@ export async function askAssistant({
   // Vector mode with automatic keyword fallback
   if (env.RETRIEVER === "vector") {
     try {
-      // Lazy load vector search if configured
-      const { vectorSearch } = await import("./retrieve.vector");
       events = await vectorSearch(question, filters, env.ASSISTANT_TOP_K);
       usedRetriever = "vector";
     } catch {
@@ -149,5 +148,73 @@ export async function askAssistant({
     answer: cleanAnswer || answer,
     events: cards,
     usedRetriever,
+    suggestions: generateFollowUpSuggestions(question, events, isBangla),
   };
+}
+
+function generateFollowUpSuggestions(
+  question: string,
+  events: RetrievedEvent[],
+  isBangla: boolean
+): string[] {
+  const hasFree = events.some((e) => Number(e.fee) === 0);
+  const hasPaid = events.some((e) => Number(e.fee) > 0);
+
+  if (isBangla) {
+    if (events.length === 0) {
+      return [
+        "এই সপ্তাহের ফ্রি ইভেন্ট দেখাও",
+        "টেকনোলজি ও কোডিং মিটআপ",
+        "সব পাবলিক ইভেন্ট দেখাও",
+      ];
+    }
+    const suggestions: string[] = [];
+    if (hasPaid && !hasFree) {
+      suggestions.push("ফ্রি ইভেন্টগুলো দেখাও");
+    } else if (hasFree && !hasPaid) {
+      suggestions.push("পেইড কর্মশালা ও মাস্টারক্লাস");
+    } else {
+      suggestions.push("এই উইকেন্ডের ইভেন্টগুলো");
+    }
+
+    if (!/join/i.test(question)) {
+      suggestions.push("যেগুলোতে আমি জয়েন করতে পারব");
+    } else {
+      suggestions.push("অনলাইন বা টেক মিটআপ");
+    }
+
+    suggestions.push("আগামীকালের ইভেন্টগুলো কী কী?");
+    return [...new Set(suggestions)].slice(0, 3);
+  }
+
+  if (events.length === 0) {
+    return [
+      "Free events this weekend",
+      "Technology and coding meetups",
+      "Show all upcoming events",
+    ];
+  }
+
+  const suggestions: string[] = [];
+  if (hasPaid && !hasFree) {
+    suggestions.push("Free events this weekend");
+  } else if (hasFree && !hasPaid) {
+    suggestions.push("Paid workshops & masterclasses");
+  } else {
+    suggestions.push("Free events this weekend");
+  }
+
+  if (!/join/i.test(question)) {
+    suggestions.push("Events I can join");
+  } else {
+    suggestions.push("Tech and coding meetups");
+  }
+
+  if (/weekend/i.test(question)) {
+    suggestions.push("Events happening today");
+  } else {
+    suggestions.push("Paid workshops");
+  }
+
+  return [...new Set(suggestions)].slice(0, 3);
 }

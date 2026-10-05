@@ -51,4 +51,5 @@ export interface AskAssistantResult {
   answer: string;
   events: AssistantEventCard[];
   usedRetriever: "keyword" | "vector";
+  suggestions?: string[];
 }

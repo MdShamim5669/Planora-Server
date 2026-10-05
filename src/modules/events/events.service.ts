@@ -73,14 +73,21 @@ export const listEvents = async (options: ListEventsOptions) => {
       select: {
         id: true,
         title: true,
+        description: true,
         eventDate: true,
+        venue: true,
+        eventLink: true,
         visibility: true,
         fee: true,
         isFeatured: true,
+        imageUrl: true,
+        bannerImage: true,
+        createdAt: true,
         organizer: {
           select: {
             id: true,
             name: true,
+            email: true,
           },
         },
       },
@@ -109,7 +116,7 @@ export const getFeaturedEvent = async () => {
       eventDate: { gt: new Date() },
     },
     include: {
-      organizer: { select: { id: true, name: true } },
+      organizer: { select: { id: true, name: true, email: true } },
     },
   });
 
@@ -121,7 +128,7 @@ export const getFeaturedEvent = async () => {
       },
       orderBy: { eventDate: "asc" },
       include: {
-        organizer: { select: { id: true, name: true } },
+        organizer: { select: { id: true, name: true, email: true } },
       },
     });
   }
@@ -141,13 +148,21 @@ export const getUpcomingEvents = async () => {
     select: {
       id: true,
       title: true,
+      description: true,
       eventDate: true,
+      venue: true,
+      eventLink: true,
       fee: true,
       visibility: true,
+      isFeatured: true,
+      imageUrl: true,
+      bannerImage: true,
+      createdAt: true,
       organizer: {
         select: {
           id: true,
           name: true,
+          email: true,
         },
       },
     },

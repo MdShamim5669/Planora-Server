@@ -1,11 +1,12 @@
 import { Request, Response } from "express";
+import { catchAsync } from "../../utils/catchAsync";
 import { env } from "../../config/env";
 import { ApiError } from "../../utils/ApiError";
 import { sendResponse } from "../../utils/sendResponse";
 import { askAssistant } from "./assistant.service";
 
-export const ask = async (req: Request, res: Response) => {
-  if (!env.ASSISTANT_ENABLED) {
+export const ask = catchAsync(async (req: Request, res: Response) => {
+  if (env.ASSISTANT_ENABLED === false) {
     throw new ApiError(
       404,
       "NOT_FOUND",
@@ -26,4 +27,5 @@ export const ask = async (req: Request, res: Response) => {
     message: "Answer generated",
     data: result,
   });
-};
+});
+

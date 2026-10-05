@@ -16,7 +16,14 @@ let anthropicClient: Anthropic | null = null;
 function getAnthropicClient(): Anthropic | null {
   if (!anthropicClient && env.ANTHROPIC_API_KEY) {
     try {
-      anthropicClient = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY });
+      const defaultHeaders: Record<string, string> = {};
+      if (env.ANTHROPIC_WORKSPACE_ID) {
+        defaultHeaders["anthropic-workspace-id"] = env.ANTHROPIC_WORKSPACE_ID;
+      }
+      anthropicClient = new Anthropic({
+        apiKey: env.ANTHROPIC_API_KEY,
+        defaultHeaders: Object.keys(defaultHeaders).length > 0 ? defaultHeaders : undefined,
+      });
     } catch {
       anthropicClient = null;
     }
@@ -74,12 +81,13 @@ export async function askAssistant({
   }
 
   let answer = "";
+  let claudeSuccess = false;
   const client = getAnthropicClient();
 
   if (client) {
     try {
       const msg = await client.messages.create({
-        model: env.ANTHROPIC_MODEL || "claude-haiku-4-5-20251001",
+        model: env.ANTHROPIC_MODEL || "claude-3-5-haiku-20241022",
         max_tokens: 400,
         system: SYSTEM_PROMPT,
         messages: [
@@ -92,16 +100,26 @@ export async function askAssistant({
         .map((b) => (b.type === "text" ? b.text : ""))
         .join("")
         .trim();
+      if (answer) {
+        claudeSuccess = true;
+      }
     } catch (err) {
-      console.error("Assistant Claude API call failed:", err);
-      answer =
-        "Sorry, I couldn't write a full answer right now. Here are the closest events I found on Planora.";
+      console.warn("Assistant Claude API call fallback activated:", err);
     }
-  } else {
-    answer =
-      events.length > 0
-        ? `Here are the matching events found on Planora:`
-        : "No matching events found at this time. Try adjusting your search query.";
+  }
+
+  const isBangla = /[\u0980-\u09FF]/.test(question) || /kono|ache|dekhao|ki|korte|pari/i.test(question);
+
+  if (!claudeSuccess || !answer) {
+    if (events.length > 0) {
+      answer = isBangla
+        ? `আপনার অনুসন্ধানের ভিত্তিতে Planora-তে ${events.length}টি আসন্ন ইভেন্ট পাওয়া গেছে:`
+        : `Here are the top ${events.length} upcoming events found on Planora that match your search:`;
+    } else {
+      answer = isBangla
+        ? "এই মুহূর্তে আপনার পছন্দের সাথে মিলে এমন কোনো ইভেন্ট পাওয়া যায়নি। অনুগ্রহ করে অন্য কোনো তারিখ বা কিওয়ার্ড দিয়ে চেষ্টা করুন।"
+        : "No matching upcoming events found on Planora at this time. Please try adjusting your date or search keywords.";
+    }
   }
 
   // Parse cited event numbers e.g. [1], [2]

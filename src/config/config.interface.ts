@@ -24,6 +24,7 @@ export interface EnvConfig {
   ASSISTANT?: {
     ENABLED: boolean;
     ANTHROPIC_API_KEY?: string;
+    ANTHROPIC_WORKSPACE_ID?: string;
     ANTHROPIC_MODEL?: string;
     RETRIEVER: 'keyword' | 'vector';
     TOP_K: number;

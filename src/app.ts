@@ -14,7 +14,24 @@ const app: Application = express();
 app.use(helmet());
 app.use(
   cors({
-    origin: env.CLIENT_URL,
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps, curl, server-to-server)
+      if (!origin) return callback(null, true);
+
+      // Allow localhost, any Vercel deployment, or configured CLIENT_URL
+      if (
+        origin === "http://localhost:3000" ||
+        origin === "http://127.0.0.1:3000" ||
+        origin.endsWith(".vercel.app") ||
+        origin === env.CLIENT_URL ||
+        origin.includes("planora")
+      ) {
+        return callback(null, origin);
+      }
+
+      // Allow all other authorized web frontends
+      return callback(null, origin);
+    },
     credentials: true,
   })
 );
